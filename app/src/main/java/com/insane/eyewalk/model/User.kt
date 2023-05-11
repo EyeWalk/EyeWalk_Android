@@ -4,9 +4,10 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.insane.eyewalk.database.dto.UserDTO
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
 
 @Parcelize
-data class User(
+data class User (
 
     @SerializedName("id")
     val id: Long,
@@ -16,12 +17,18 @@ data class User(
     val email: String,
     @SerializedName("active")
     val active: Boolean,
-    @SerializedName("token")
-    val token: Token,
-    @SerializedName("contacts")
-    val contacts: List<Contact>,
     @SerializedName("plan")
     val plan: Plan,
+    @SerializedName("planStart")
+    val planStart: String,
+    @SerializedName("planEnd")
+    val planEnd: String,
+    @SerializedName("contacts")
+    val contacts: List<Contact>,
+    @SerializedName("created")
+    val created: String,
+    @SerializedName("lastVisit")
+    val lastVisit: String
 
 ): Parcelable {
     fun toUserDTO(): UserDTO {
@@ -29,7 +36,10 @@ data class User(
             id = id,
             name = name,
             email = email,
-            active = active
+            active = active,
+            planId = plan.id,
+            created = created,
+            lastVisit = lastVisit
         )
     }
 }

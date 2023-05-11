@@ -2,6 +2,7 @@ package com.insane.eyewalk.interfaces
 
 import com.insane.eyewalk.config.AppConfig
 import com.insane.eyewalk.model.Token
+import com.insane.eyewalk.model.User
 import com.insane.eyewalk.model.input.UserAuthentication
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -15,6 +16,16 @@ interface ApiInterface {
     suspend fun authenticateUser(
         @Body userAuthentication: UserAuthentication
     ): Response<Token>
+
+    @POST("auth/refresh-token")
+    suspend fun refreshToken(
+        @Header("Authorization") refreshToken: String
+    ): Response<Token>
+
+    @GET("user")
+    suspend fun getUser(
+        @Header("Authorization") token: String
+    ): Response<User>
 
     companion object {
         fun create() : ApiInterface {

@@ -3,6 +3,8 @@ package com.insane.eyewalk.model
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
+import java.util.Date
 
 @Parcelize
 data class Contact (
@@ -18,7 +20,7 @@ data class Contact (
     @SerializedName("emails")
     val emails: List<Email>,
     @SerializedName("pictures")
-    val pictures: List<Picture>,
+    val pictures: List<Picture>
 
 ):Parcelable {
 

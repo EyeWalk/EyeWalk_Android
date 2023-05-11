@@ -15,4 +15,8 @@ object TokenService {
         apiService.authenticateUser(userAuthentication)
     }
 
+    suspend fun refreshToken(refreshToken: String): Response<Token> = withContext(Dispatchers.IO) {
+        apiService.refreshToken("Bearer $refreshToken")
+    }
+
 }

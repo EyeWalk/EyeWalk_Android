@@ -4,18 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.insane.eyewalk.database.dao.TokenDAO
 import com.insane.eyewalk.database.dao.UserDAO
+import com.insane.eyewalk.database.dto.TokenDTO
 import com.insane.eyewalk.database.dto.UserDTO
 
 const val DATABASE_NAME = "db_eyewalk"
 
 @Database(entities = [
-    UserDTO::class
-    ], version = 1)
+    UserDTO::class,
+    TokenDTO::class
+    ], version = 2)
 
 abstract class AppDataBase: RoomDatabase() {
 
     abstract fun userDao(): UserDAO
+    abstract fun tokenDao(): TokenDAO
 
     companion object {
         private var INSTANCE: AppDataBase? = null

@@ -4,6 +4,7 @@
     <color name="highlight_color">#FFBB3F</color>
     <color name="secondary_background">#FFBB3F</color>
     <color name="secondary_text">#000000</color>
+    <color name="dark_background">#212121</color>
     <color name="primary_background">#192230</color>
     <color name="primary_text">#FFFFFF</color>
     <color name="low_text">#818181</color>
