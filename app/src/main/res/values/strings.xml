@@ -1,3 +1,7 @@
 <resources>
+    <!-- LABELS -->
     <string name="app_name">EyeWalk</string>
+
+    <!-- IMAGE DESCRIPTIONS -->
+    <string name="logo_description">Logo EyeWalk</string>
 </resources>
