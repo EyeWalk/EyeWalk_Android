@@ -11,8 +11,11 @@ import android.os.*
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -132,6 +135,7 @@ object Tools {
             val px = dp * (metrics.densityDpi / 160f)
             return px.roundToInt()
         }
+
     }
 
     object Device {

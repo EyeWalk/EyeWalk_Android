@@ -6,6 +6,7 @@
     <color name="secondary_text">#000000</color>
     <color name="primary_background">#192230</color>
     <color name="primary_text">#FFFFFF</color>
+    <color name="low_text">#818181</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

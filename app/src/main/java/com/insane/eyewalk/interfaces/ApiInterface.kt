@@ -11,7 +11,7 @@ import retrofit2.http.*
 
 interface ApiInterface {
 
-    @POST("/auth/authenticate")
+    @POST("auth/authenticate")
     suspend fun authenticateUser(
         @Body userAuthentication: UserAuthentication
     ): Response<Token>

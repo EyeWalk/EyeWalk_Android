@@ -1,6 +1,15 @@
 <resources>
     <!-- LABELS -->
     <string name="app_name">EyeWalk</string>
+    <string name="login_title">Login</string>
+
+    <string name="login_forgot">Esqueceu login ou senha?</string>
+    <string name="login_signin">Criar conta</string>
+
+    <!-- PLACEHOLDER -->
+    <string name="login_email_placeholder">Email</string>
+    <string name="login_password_placeholder">Password</string>
+    <string name="login_button">Ir</string>
 
     <!-- MESSAGES -->
     <string name="noConnection">Sem conexão com a Internet</string>
