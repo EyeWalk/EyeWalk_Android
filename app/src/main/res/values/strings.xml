@@ -2,6 +2,9 @@
     <!-- LABELS -->
     <string name="app_name">EyeWalk</string>
 
+    <!-- MESSAGES -->
+    <string name="noConnection">Sem conexão com a Internet</string>
+
     <!-- IMAGE DESCRIPTIONS -->
     <string name="logo_description">Logo EyeWalk</string>
 </resources>
