@@ -2,6 +2,7 @@ package com.insane.eyewalk.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.insane.eyewalk.R
@@ -48,6 +49,13 @@ class MainActivity : AppCompatActivity() {
 //        binding.tabs.getTabAt(0)!!.setIcon(R.drawable.ic_email)
 //        binding.tabs.getTabAt(1)!!.setIcon(R.drawable.ic_lock)
 //        binding.tabs.getTabAt(2)!!.setIcon(R.drawable.ic_search)
+
+//        var customViewGuide = LayoutInflater.from(baseContext).inflate(R.layout.tab_guide, null);
+//        binding.tabs.getTabAt(0)!!.customView = customViewGuide
+//
+//        var customView = LayoutInflater.from(baseContext).inflate(R.layout.tab_setting, null);
+//        binding.tabs.getTabAt(3)!!.customView = customView
+
         binding.tabs.getTabAt(3)!!.setIcon(R.drawable.ic_setting)
     }
 

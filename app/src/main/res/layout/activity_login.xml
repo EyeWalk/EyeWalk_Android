@@ -118,6 +118,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- LOADER -->
     <RelativeLayout
         android:id="@+id/rlLoginLoader"
         android:layout_width="match_parent"
