@@ -13,6 +13,9 @@ interface UserDAO {
     @Query("SELECT * FROM $USER_TABLE_NAME ORDER BY id ASC")
     fun getAll(): List<UserDTO>
 
+    @Query("SELECT * FROM $USER_TABLE_NAME LIMIT 1")
+    fun getUser(): UserDTO
+
     @Query("SELECT * FROM $USER_TABLE_NAME WHERE id = :userId")
     fun getById(userId: Int): UserDTO
 

@@ -38,6 +38,9 @@ data class User (
             email = email,
             active = active,
             planId = plan.id,
+            planName = plan.name,
+            planStart = planStart,
+            planEnd = planEnd,
             created = created,
             lastVisit = lastVisit
         )

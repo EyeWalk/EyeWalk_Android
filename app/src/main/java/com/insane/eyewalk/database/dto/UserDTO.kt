@@ -19,6 +19,9 @@ data class UserDTO(
     @ColumnInfo val email: String,
     @ColumnInfo val active: Boolean,
     @ColumnInfo val planId: Long,
+    @ColumnInfo val planName: String,
+    @ColumnInfo val planStart: String,
+    @ColumnInfo val planEnd: String,
     @ColumnInfo val created: String,
     @ColumnInfo val lastVisit: String
 

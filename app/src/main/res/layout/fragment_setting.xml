@@ -1,16 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_background"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingHorizontal="20dp"
+    android:scrollbars="none"
     tools:context=".fragment.SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="@color/primary_text"
-        android:text="@string/hello_blank_fragment" />
+        android:background="@color/primary_background"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Conta"
+                android:textAlignment="textStart"
+                android:layout_weight="1"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:textSize="30sp"/>
+
+            <TextView
+                android:id="@+id/tvLogout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sair"
+                android:textAlignment="textEnd"
+                android:textColor="@color/primary_text"
+                android:textSize="25sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nome Sobrenome"
+                android:textAlignment="textStart"
+                android:textColor="@color/primary_text"
+                android:textSize="25sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="email@email.com"
+                android:textAlignment="textStart"
+                android:textColor="@color/primary_text"
+                android:textSize="25sp"
+                android:textStyle="normal" />
+
+
+            <TextView
+                android:id="@+id/tvPlan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:text="Plano Básico"
+                android:textAlignment="textStart"
+                android:textColor="@color/primary_text"
+                android:textSize="25sp"
+                android:textStyle="normal" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Expira em "
+                    android:textAlignment="textStart"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/tvExpire"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="12/06/2023"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/highlight_color"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginVertical="35dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/primary_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Configurações"
+                android:textAlignment="textStart"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:textSize="30sp"/>
+
+            <Switch
+                android:id="@+id/switchVoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:layout_marginTop="25dp"
+                android:textSize="25sp"
+                android:layout_weight="1"
+                android:text="Guia por voz"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <Switch
+                android:id="@+id/switchRead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:textSize="25sp"
+                android:layout_weight="1"
+                android:text="Leitura dos textos"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <View
+                android:layout_marginVertical="35dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/primary_text" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCancelPlan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/danger_background"
+            android:textColor="@color/danger_text"
+            android:textStyle="bold"
+            android:text="Cancelar Conta" />
+
+    </LinearLayout>
+
+</ScrollView>

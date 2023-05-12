@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.lifecycleScope
+import com.insane.eyewalk.database.dto.SettingDTO
 import com.insane.eyewalk.database.room.AppDataBase
 import com.insane.eyewalk.databinding.ActivityLoginBinding
 import com.insane.eyewalk.model.Token
@@ -29,8 +30,16 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = AppDataBase.getDataBase(this)
+        setUpInitialData()
         checkExistingUser()
         setUpClickListeners()
+    }
+
+    private fun setUpInitialData() {
+        val setting = db.settingDao().getAll()
+        if (setting.isEmpty()) {
+            db.settingDao().insert(SettingDTO(1, switchVoice = true, switchRead = true))
+        }
     }
 
     private fun checkExistingUser() {

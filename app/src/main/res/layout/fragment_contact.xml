@@ -11,6 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textColor="@color/primary_text"
-        android:text="@string/hello_blank_fragment" />
+        android:text="@string/contact_title" />
 
 </FrameLayout>

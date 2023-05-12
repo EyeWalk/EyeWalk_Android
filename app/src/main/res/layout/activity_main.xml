@@ -61,11 +61,13 @@
                 android:layout_gravity="start"
                 app:tabBackground="@color/dark_background"
                 app:tabGravity="start"
+                app:tabPaddingStart="10dp"
+                app:tabPaddingEnd="10dp"
                 app:tabSelectedTextColor="@color/highlight_color"
                 app:tabIconTint="@color/primary_text"
                 app:tabIndicatorColor="@color/highlight_color"
                 app:tabInlineLabel="true"
-                app:tabMode="fixed"
+                app:tabMode="auto"
                 app:tabTextAppearance="@style/CustomTabStyle"
                 app:tabTextColor="@color/white">
 

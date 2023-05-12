@@ -1,60 +1,68 @@
 package com.insane.eyewalk.fragment
 
+import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.insane.eyewalk.R
+import android.widget.CompoundButton
+import androidx.fragment.app.Fragment
+import com.insane.eyewalk.activity.LoginActivity
+import com.insane.eyewalk.database.room.AppDataBase
+import com.insane.eyewalk.databinding.FragmentSettingBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SettingFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SettingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentSettingBinding
+    private lateinit var db: AppDataBase
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        // Inflate layout
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
+
+        db = AppDataBase.getDataBase(this.requireContext())
+        setUpViews()
+        setUpCLickListeners()
+
+        return binding.root
+    }
+
+    private fun setUpViews() {
+        val user = db.userDao().getUser()
+        binding.tvName.text = user.name
+        binding.tvEmail.text = user.email
+        binding.tvPlan.text = user.planName
+        binding.tvExpire.text = user.planEnd
+        binding.switchVoice.isChecked = db.settingDao().getSetting().switchVoice
+        binding.switchRead.isChecked = db.settingDao().getSetting().switchRead
+        binding.tvLogout.paintFlags = binding.tvLogout.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+    }
+
+    private fun setUpCLickListeners() {
+        // BUTTON LOGOUT
+        binding.tvLogout.setOnClickListener { logout() }
+        val setting = db.settingDao().getSetting()
+
+        binding.switchVoice.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
+            setting.switchVoice = isChecked
+            db.settingDao().truncateTable()
+            db.settingDao().insert(setting)
+        })
+        binding.switchRead.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
+            setting.switchRead = isChecked
+            db.settingDao().truncateTable()
+            db.settingDao().insert(setting)
+        })
+    }
+
+    private fun logout() {
+        db.tokenDao().truncateTable()
+        activity?.let{
+            val intent = Intent (it, LoginActivity::class.java)
+            it.startActivity(intent)
+            this.requireActivity().finish()
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SettingFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SettingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }
