@@ -16,6 +16,9 @@ interface TokenDAO {
     @Query("SELECT * FROM $TOKEN_TABLE_NAME WHERE id = :id")
     fun getById(id: Int): TokenDTO
 
+    @Query("SELECT * FROM $TOKEN_TABLE_NAME LIMIT 1")
+    fun getToken(): TokenDTO
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(token: TokenDTO)
 

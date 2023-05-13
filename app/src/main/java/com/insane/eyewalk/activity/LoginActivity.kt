@@ -8,14 +8,14 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.lifecycleScope
+import com.insane.eyewalk.R
 import com.insane.eyewalk.database.dto.SettingDTO
 import com.insane.eyewalk.database.room.AppDataBase
 import com.insane.eyewalk.databinding.ActivityLoginBinding
 import com.insane.eyewalk.model.Token
-import com.insane.eyewalk.model.User
 import com.insane.eyewalk.model.input.UserAuthentication
+import com.insane.eyewalk.service.RoomService
 import com.insane.eyewalk.service.TokenService
-import com.insane.eyewalk.service.UserService
 import com.insane.eyewalk.utils.Tools
 import kotlinx.coroutines.launch
 
@@ -43,12 +43,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkExistingUser() {
-        val users = db.userDao().getAll()
-        if (users.isNotEmpty()) {
-            binding.etEmailLogin.setText(users[0].email)
-            val tokens = db.tokenDao().getAll()
-            if (tokens.isNotEmpty()) {
-                refreshToken(tokens[0].refreshToken)
+        RoomService(db).let { room ->
+            if (room.existUser()) {
+                room.getUser().let { user -> binding.etEmailLogin.setText(user.email) }
+                if (room.existToken()) { autoLogin(room.getToken().refreshToken) }
             }
         }
     }
@@ -62,23 +60,19 @@ class LoginActivity : AppCompatActivity() {
             if (email.length >= 5) {
                 if (password.length >= 5) {
                     login(email, password)
-                }  else Tools.Show.message(this, "Senha muito curta")
-            } else Tools.Show.message(this, "Email inválido!")
+                }  else Tools.Show.message(this, resources.getString(R.string.passTooShort))
+            } else Tools.Show.message(this, resources.getString(R.string.invalidEmail))
         }
     }
 
-    private fun refreshToken(refreshToken: String) {
+    private fun autoLogin(refreshToken: String) {
         lifecycleScope.launch {
             try {
                 loader(true)
                 val token = TokenService.refreshToken(refreshToken)
                 if (token.isSuccessful) {
                     token.body()?.let {
-                        println(it.accessToken)
-                        println(it.refreshToken)
-                        db.tokenDao().truncateTable()
-                        db.tokenDao().insert(token = it.toTokenDTO())
-                        loader(false)
+                        RoomService(db).updateToken(it.toTokenDTO())
                         startApp(it)
                     }
                 } else {
@@ -97,11 +91,7 @@ class LoginActivity : AppCompatActivity() {
                 val token = TokenService.getToken(UserAuthentication(email, password))
                 if (token.isSuccessful) {
                     token.body()?.let {
-                        println(it.accessToken)
-                        println(it.refreshToken)
-                        db.tokenDao().truncateTable()
-                        db.tokenDao().insert(token = it.toTokenDTO())
-                        loader(false)
+                        RoomService(db).updateToken(it.toTokenDTO())
                         startApp(it)
                     }
                 } else {
@@ -119,15 +109,15 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("token", token.accessToken)
         startActivity(intent)
-        this.finish();
+        this.finish()
     }
 
     private fun notAuthenticated() {
-        Tools.Show.message(this, "Login ou senha inválido")
+        Tools.Show.message(this, resources.getString(R.string.notAuthenticated))
     }
 
     private fun errorAuthenticating() {
-        Tools.Show.message(this, "Algo deu errado tente novamente")
+        Tools.Show.message(this, resources.getString(R.string.somethingWrong))
     }
 
     private fun Context.hideKeyboard(view: View) {
@@ -139,9 +129,5 @@ class LoginActivity : AppCompatActivity() {
         if (display) binding.rlLoginLoader.visibility = View.VISIBLE
         else binding.rlLoginLoader.visibility = View.GONE
     }
-
-//      refreshToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJpYXQiOjE2ODM3NDUyMzMsImV4cCI6MTY4MzgzMTYzM30.DyzYKpQfIqt9H8A2AUvldfBzFfwE8zu-A3VLmXdYNFk")
-//        "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJpYXQiOjE2ODM4Mjk0MzAsImV4cCI6MTY4MzkxNTgzMH0.KiSzeP9JI4JtF5THWgTHQVcP6NnlK8BcD5wan_Rt2lo",
-//        "refresh_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJpYXQiOjE2ODM4Mjk0MzAsImV4cCI6MTY4NDQzNDIzMH0.kHAWZ25yadpfZdAzJivP2mulAPLjPUUbcZgve8_KI7o"
 
 }

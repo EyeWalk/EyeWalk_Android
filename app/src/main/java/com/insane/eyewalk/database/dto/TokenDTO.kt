@@ -3,6 +3,7 @@ package com.insane.eyewalk.database.dto
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.insane.eyewalk.model.Token
 
 const val TOKEN_TABLE_NAME = "tb_token"
 
@@ -14,5 +15,10 @@ data class TokenDTO(
     @ColumnInfo var refreshToken: String
 
 ) {
-
+    fun toToken(): Token {
+        return Token(
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
+    }
 }

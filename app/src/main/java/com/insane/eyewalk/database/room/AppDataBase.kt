@@ -17,7 +17,7 @@ const val DATABASE_NAME = "db_eyewalk"
     UserDTO::class,
     TokenDTO::class,
     SettingDTO::class
-    ], version = 4)
+    ], version = 7)
 
 abstract class AppDataBase: RoomDatabase() {
 

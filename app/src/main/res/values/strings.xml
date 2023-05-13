@@ -3,6 +3,13 @@
     <string name="app_name">EyeWalk</string>
     <string name="login_title">Login</string>
 
+    <!-- TABS -->
+    <string name="tabOneTitle">Guia</string>
+    <string name="tabTwoTitle">Identificador</string>
+    <string name="tabThreeTitle">Contatos</string>
+    <string name="tabFourTitle"/>
+
+    <!-- LINKS -->
     <string name="login_forgot">Esqueceu login ou senha?</string>
     <string name="login_signin">Criar conta</string>
 
@@ -10,15 +17,16 @@
     <string name="login_email_placeholder">Email</string>
     <string name="login_password_placeholder">Password</string>
     <string name="login_button">Ir</string>
+    <string name="label_contact">Contato de emergência</string>
 
     <!-- MESSAGES -->
     <string name="noConnection">Sem conexão com a Internet</string>
+    <string name="passTooShort">Senha muito curta</string>
+    <string name="invalidEmail">Email inválido!</string>
 
     <!-- IMAGE DESCRIPTIONS -->
     <string name="logo_description">Logo EyeWalk</string>
 
-    <string name="guide_title">Guia</string>
-    <string name="camera_title">Identificador</string>
-    <string name="contact_title">Contatos</string>
-    <string name="setting_title">Configurações</string>
+    <string name="notAuthenticated">Login ou senha inválido</string>
+    <string name="somethingWrong">Algo deu errado tente novamente</string>
 </resources>

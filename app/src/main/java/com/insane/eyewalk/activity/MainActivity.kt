@@ -2,7 +2,6 @@ package com.insane.eyewalk.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.insane.eyewalk.R
 import com.insane.eyewalk.adapter.ViewPagerAdapter
@@ -13,6 +12,7 @@ import com.insane.eyewalk.fragment.ContactFragment
 import com.insane.eyewalk.fragment.GuideFragment
 import com.insane.eyewalk.fragment.SettingFragment
 import com.insane.eyewalk.model.Token
+import com.insane.eyewalk.service.RoomService
 import com.insane.eyewalk.service.UserService
 import kotlinx.coroutines.launch
 
@@ -27,20 +27,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = AppDataBase.getDataBase(this)
-        val token = intent.getStringExtra("token").toString()
-        println(token)
+
+        intent.getStringExtra("token").toString().let {
+            loadUser(Token(it,it))
+        }
         setUpTabs()
-        loadUser(Token(accessToken = token, refreshToken = token))
 
     }
 
     private fun setUpTabs() {
         // SET UP ADAPTER
         val adapter = ViewPagerAdapter(supportFragmentManager)
-        adapter.addFragment(GuideFragment(), "Guia")
-        adapter.addFragment(CameraFragment(), "Identificador")
-        adapter.addFragment(ContactFragment(), "Contatos")
-        adapter.addFragment(SettingFragment(), "")
+        adapter.addFragment(GuideFragment(), resources.getString(R.string.tabOneTitle))
+        adapter.addFragment(CameraFragment(), resources.getString(R.string.tabTwoTitle))
+        adapter.addFragment(ContactFragment(), resources.getString(R.string.tabThreeTitle))
+        adapter.addFragment(SettingFragment(), resources.getString(R.string.tabFourTitle))
         // SET UP VIEWPAGER ADAPTER
         binding.viewPager.adapter = adapter
         // SET UP TABS WITH VIEWPAGER
@@ -51,33 +52,20 @@ class MainActivity : AppCompatActivity() {
     private fun loadUser(token: Token) {
         lifecycleScope.launch {
             try {
-                loader(true)
-                println(token.accessToken)
                 val user = UserService.getUser(token)
                 if (user.isSuccessful) {
                     user.body()?.let {
-                        db.userDao().truncateTable()
-                        db.userDao().insert(it.toUserDTO())
-                        loader(false)
-                        println(it.contacts.size)
-                        println(it.contacts[0])
+                        RoomService(db).updateUser(it.toUserDTO())
                     }
                 } else {
-                    loader(false)
                     System.err.println("Erro ao carregar os dados do usuário")
                     finish()
                 }
             } catch (e: Exception) {
-                loader(false)
                 System.err.println(e.message)
                 finish()
             }
         }
-    }
-
-    private fun loader(display: Boolean) {
-        if (display) binding.rlMainLoader.visibility = View.VISIBLE
-        else binding.rlMainLoader.visibility = View.GONE
     }
 
 }
