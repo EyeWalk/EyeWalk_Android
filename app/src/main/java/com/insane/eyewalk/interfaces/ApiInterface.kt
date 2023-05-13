@@ -4,6 +4,7 @@ import com.insane.eyewalk.config.AppConfig
 import com.insane.eyewalk.model.Contact
 import com.insane.eyewalk.model.Token
 import com.insane.eyewalk.model.User
+import com.insane.eyewalk.model.input.ContactInput
 import com.insane.eyewalk.model.input.UserAuthentication
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
@@ -38,6 +39,12 @@ interface ApiInterface {
     suspend fun getContacts(
         @Header("Authorization") token: String
     ): Response<List<Contact>>
+
+    @POST("contact")
+    suspend fun saveContact(
+        @Header("Authorization") token: String,
+        @Body contact: ContactInput
+    ): Response<Contact>
 
     companion object {
         fun create() : ApiInterface {

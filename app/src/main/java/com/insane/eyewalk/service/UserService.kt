@@ -4,6 +4,7 @@ import com.insane.eyewalk.interfaces.ApiInterface
 import com.insane.eyewalk.model.Contact
 import com.insane.eyewalk.model.Token
 import com.insane.eyewalk.model.User
+import com.insane.eyewalk.model.input.ContactInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -22,6 +23,10 @@ object UserService {
 
     suspend fun getContacts(token: Token): Response<List<Contact>> = withContext(Dispatchers.IO) {
         apiService.getContacts(token = "Bearer ${token.accessToken}")
+    }
+
+    suspend fun saveContact(token: Token, contact: ContactInput): Response<Contact> = withContext(Dispatchers.IO) {
+        apiService.saveContact(token = "Bearer ${token.accessToken}",contact)
     }
 
 }
