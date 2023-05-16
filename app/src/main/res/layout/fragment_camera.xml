@@ -1,16 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_background"
     tools:context=".fragment.CameraFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.camera.view.PreviewView
+        android:id="@+id/mCameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="@color/primary_text"
-        android:text="@string/tabTwoTitle" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnCaptureCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_marginBottom="26dp"
+        android:text="Identificar Imagem"
+        android:textStyle="bold"
+        android:elevation="2dp"
+        android:backgroundTint="@color/secondary_background"
+        android:textColor="@color/secondary_text"
+        android:drawableLeft="@drawable/ic_camera"
+        android:drawablePadding="3sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnProcessCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_marginBottom="26dp"
+        android:text="Processando Imagem"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:elevation="2dp"
+        android:backgroundTint="@color/secondary_background"
+        android:textColor="@color/secondary_text"
+        android:drawableLeft="@drawable/ic_time"
+        android:drawablePadding="3sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnResultCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_marginBottom="26dp"
+        android:visibility="gone"
+        android:text=""
+        android:textStyle="bold"
+        android:elevation="2dp"
+        android:backgroundTint="@color/secondary_background"
+        android:textColor="@color/secondary_text"
+        android:drawableLeft="@drawable/ic_sound"
+        android:drawablePadding="3sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivCapturedImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/dark_background"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:elevation="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

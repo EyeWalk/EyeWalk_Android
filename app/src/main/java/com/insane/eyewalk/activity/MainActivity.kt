@@ -1,8 +1,10 @@
 package com.insane.eyewalk.activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Camera
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.insane.eyewalk.R
 import com.insane.eyewalk.adapter.ViewPagerAdapter
 import com.insane.eyewalk.database.room.AppDataBase
@@ -15,6 +17,7 @@ import com.insane.eyewalk.model.Token
 import com.insane.eyewalk.service.RoomService
 import com.insane.eyewalk.service.UserService
 import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +50,31 @@ class MainActivity : AppCompatActivity() {
         // SET UP TABS WITH VIEWPAGER
         binding.tabs.setupWithViewPager(binding.viewPager)
         binding.tabs.getTabAt(3)!!.setIcon(R.drawable.ic_setting)
+
+        val vPager = binding.viewPager
+
+        vPager.addOnPageChangeListener(object : OnPageChangeListener {
+            // This method will be invoked when a new page becomes selected.
+            override fun onPageSelected(position: Int) {
+                if (position == 1) {
+                }
+            }
+
+            // This method will be invoked when the current page is scrolled
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                // Code goes here
+            }
+
+            // Called when the scroll state changes:
+            // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
+            override fun onPageScrollStateChanged(state: Int) {
+                // Code goes here
+            }
+        })
     }
 
     private fun loadUser(token: Token) {
