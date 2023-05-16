@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.insane.eyewalk.R
 import com.insane.eyewalk.config.Constants
+import com.insane.eyewalk.config.Player
 import com.insane.eyewalk.databinding.FragmentCameraBinding
 import com.insane.eyewalk.utils.Tools
 import java.io.File
@@ -33,12 +34,14 @@ class CameraFragment : Fragment() {
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var cameraShutter: Player
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = FragmentCameraBinding.inflate(inflater, container, false)
         outputDirectory = getOutputDirectory()
+        cameraShutter = Player(requireContext(),R.raw.shutter)
         setClickListeners()
         return binding.root
     }
@@ -126,6 +129,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun takePhoto() {
+        cameraShutter.play()
         setButtonState(PROCESS)
         val imageCapture = imageCapture ?: return
         val photoFile = File(
@@ -144,10 +148,12 @@ class CameraFragment : Fragment() {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     identifyImage(savedUri)
+                    cameraShutter.stop()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     Log.e(Constants.TAG, "onError: ${exception.message}",exception)
+                    cameraShutter.stop()
                 }
             }
         )
