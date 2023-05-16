@@ -64,8 +64,8 @@ class CameraFragment : Fragment() {
         } else {
             Tools.Show.message(requireContext(), "É necessário o acesso a camera para utilizar o identificador.")
             ActivityCompat.requestPermissions(
-                requireActivity(), Constants.REQUIRED_PERMISSIONS,
-                Constants.REQUEST_CODE_PERMISSIONS
+                requireActivity(), Constants.CAMERA_REQUIRED_PERMISSIONS,
+                Constants.CAMERA_REQUEST_CODE_PERMISSION
             )
         }
     }
@@ -113,7 +113,7 @@ class CameraFragment : Fragment() {
                     requireActivity(), cameraSelector, preview, imageCapture
                 )
             } catch (e: Exception) {
-                Log.d(Constants.TAG, "startCamera Fail:", e)
+                Log.d(Constants.CAM_TAG, "startCamera Fail:", e)
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
@@ -134,7 +134,7 @@ class CameraFragment : Fragment() {
         val imageCapture = imageCapture ?: return
         val photoFile = File(
             outputDirectory,
-            SimpleDateFormat(Constants.FILE_NAME_FORMAT,
+            SimpleDateFormat(Constants.CAMERA_FILE_NAME_FORMAT,
             Locale.getDefault()).format(System.currentTimeMillis())+".jpg")
 
         val outputOption = ImageCapture
@@ -152,7 +152,7 @@ class CameraFragment : Fragment() {
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Log.e(Constants.TAG, "onError: ${exception.message}",exception)
+                    Log.e(Constants.CAM_TAG, "onError: ${exception.message}",exception)
                     cameraShutter.stop()
                 }
             }
@@ -183,7 +183,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun identifyImage(uri: Uri) {
-        binding.ivCapturedImage.let { iv ->
+        binding.ivCapturedImage.let{ iv ->
             iv.setImageURI(uri)
             iv.visibility = View.VISIBLE
             setButtonState(RESULT, "descrição da foto")
@@ -195,7 +195,7 @@ class CameraFragment : Fragment() {
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray) {
-        if (requestCode == Constants.REQUEST_CODE_PERMISSIONS) {
+        if (requestCode == Constants.CAMERA_REQUEST_CODE_PERMISSION) {
             if (allPermissionGranted())
                 startCamera()
         } else {
@@ -204,7 +204,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun allPermissionGranted() =
-        Constants.REQUIRED_PERMISSIONS.all {
+        Constants.CAMERA_REQUIRED_PERMISSIONS.all {
             ContextCompat.checkSelfPermission(
                 requireContext(), it
             ) == PackageManager.PERMISSION_GRANTED
