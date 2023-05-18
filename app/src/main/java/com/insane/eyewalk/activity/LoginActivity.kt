@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setUpInitialData() {
         val setting = db.settingDao().getAll()
         if (setting.isEmpty()) {
-            db.settingDao().insert(SettingDTO(1, switchVoice = true, switchRead = true))
+            db.settingDao().insert(SettingDTO(1, switchVoice = true, switchRead = true, switchMap = true))
         }
     }
 

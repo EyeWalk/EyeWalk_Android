@@ -29,4 +29,6 @@
 
     <string name="notAuthenticated">Login ou senha inválido</string>
     <string name="somethingWrong">Algo deu errado tente novamente</string>
+    <string name="placeholder_address_from">De</string>
+    <string name="placeholder_address_to">Para</string>
 </resources>

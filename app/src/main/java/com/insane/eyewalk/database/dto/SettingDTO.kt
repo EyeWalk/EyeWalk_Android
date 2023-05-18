@@ -11,6 +11,7 @@ data class SettingDTO(
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     @ColumnInfo var switchVoice: Boolean,
-    @ColumnInfo var switchRead: Boolean
+    @ColumnInfo var switchRead: Boolean,
+    @ColumnInfo var switchMap: Boolean
 
     )

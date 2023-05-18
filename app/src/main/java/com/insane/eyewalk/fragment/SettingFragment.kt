@@ -14,8 +14,6 @@ import com.insane.eyewalk.database.room.AppDataBase
 import com.insane.eyewalk.databinding.FragmentSettingBinding
 import com.insane.eyewalk.service.RoomService
 import com.insane.eyewalk.service.UserService
-import com.insane.eyewalk.utils.Tools
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
@@ -45,6 +43,7 @@ class SettingFragment : Fragment() {
         binding.tvExpire.text = user.planEnd
         binding.switchVoice.isChecked = setting.switchVoice
         binding.switchRead.isChecked = setting.switchRead
+        binding.switchMap.isChecked = setting.switchMap
         binding.tvLogout.paintFlags = binding.tvLogout.paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
@@ -61,6 +60,12 @@ class SettingFragment : Fragment() {
         binding.switchRead.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
             roomService.getSetting().let {
                 it.switchRead = isChecked
+                roomService.updateSetting(it)
+            }
+        })
+        binding.switchMap.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
+            roomService.getSetting().let {
+                it.switchMap = isChecked
                 roomService.updateSetting(it)
             }
         })

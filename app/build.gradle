@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
@@ -10,7 +9,6 @@ plugins {
 android {
     namespace 'com.insane.eyewalk'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.insane.eyewalk"
         minSdk 26
@@ -20,7 +18,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -36,6 +33,9 @@ android {
     }
     buildFeatures{
         viewBinding = true
+    }
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
     }
 }
 
@@ -85,5 +85,16 @@ dependencies {
 
     // Dependencies for Open Street Map
     implementation 'org.osmdroid:osmdroid-android:6.1.2'
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0'
+
+//    compile(name:'osmbonuspack_6.9.0', ext:'aar')
+//    implementation 'org.osmdroid:osmdroid-android:6.1.13'
+//    implementation 'org.apache.commons:commons-lang3:3.8.1'
+//    implementation 'com.google.code.gson:gson:2.8.9'
+//    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
+
+    // Open Route Service
+//    implementation("org.glassfish.jersey.core:jersey-client:3.1.2")
+//    implementation("org.glassfish.jersey.media:jersey-media-json-jackson:3.1.2")
     
 }
