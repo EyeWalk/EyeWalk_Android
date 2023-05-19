@@ -1,33 +1,23 @@
 package com.insane.eyewalk.fragment
 
-//import jakarta.ws.rs.client.Client
-//import jakarta.ws.rs.client.ClientBuilder
-//import jakarta.ws.rs.core.MediaType
-//import jakarta.ws.rs.core.Response
-
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import android.location.Address
-import android.location.Geocoder
-import android.location.Geocoder.GeocodeListener
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Build
+import android.location.*
 import android.os.Bundle
 import android.os.StrictMode
-import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.insane.eyewalk.R
 import com.insane.eyewalk.config.Constants
 import com.insane.eyewalk.database.room.AppDataBase
@@ -39,6 +29,7 @@ import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.Projection
@@ -49,8 +40,6 @@ import org.osmdroid.views.overlay.TilesOverlay
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.roundToInt
-
 
 class GuideFragment : Fragment(),LocationListener {
 
@@ -60,11 +49,24 @@ class GuideFragment : Fragment(),LocationListener {
     private lateinit var map: MapView
     private lateinit var mapController: IMapController
     private lateinit var roadManager: RoadManager
+    private lateinit var locationGeoPoint: GeoPoint
+    private var zoomLevel: Double = 20.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+        Configuration.getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -74,9 +76,10 @@ class GuideFragment : Fragment(),LocationListener {
         db = AppDataBase.getDataBase(this.requireContext())
         roomService = RoomService(db)
         roadManager = OSRMRoadManager(this.requireContext(), "Mozilla/5.0")
+        locationGeoPoint = getLocation()
+        map = binding.mapView
 
-        val ctx: Context = requireActivity().applicationContext
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
+        Configuration.getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
 
         if (allPermissionGranted()) {
             println("Location permission granted!")
@@ -97,61 +100,85 @@ class GuideFragment : Fragment(),LocationListener {
 
         //FLOAT BUTTON CLICK
         binding.fabStartNavigation.setOnClickListener {
-
-            val addressStartPoint = binding.etStartPoint.text.toString()
             val addressEndPoint = binding.etDestination.text.toString()
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
 
-            if (!addressStartPoint.isNullOrEmpty() && !addressEndPoint.isNullOrEmpty()) {
+            if (addressEndPoint.isNotEmpty()) {
                 try {
-                    val coordinatesStartPoint = geocoder.getFromLocationName(addressStartPoint, 1)
+                    val coordinatesStartPoint = getLocation()
                     val coordinatesEndPoint = geocoder.getFromLocationName(addressEndPoint, 1)
-                    if (!coordinatesStartPoint.isNullOrEmpty() && !coordinatesEndPoint.isNullOrEmpty()) {
-                        traceRoute(coordinatesStartPoint[0].latitude, coordinatesStartPoint[0].longitude, coordinatesEndPoint[0].latitude, coordinatesEndPoint[0].longitude)
-                        // traceRoute(-23.533773, -46.625290, -23.536973, -46.629590)
+                    if (!coordinatesEndPoint.isNullOrEmpty()) {
+                        traceRoute(coordinatesStartPoint, GeoPoint(coordinatesEndPoint[0].latitude, coordinatesEndPoint[0].longitude))
                     } else {
                         Tools.Show.message(requireContext(), "Endereço não encontrado! Verifique os dados.")
                     }
                 } catch (e:IOException) {
+                    Tools.Show.message(requireContext(),"Algo deu errado, por favor tente novamente!")
                     e.printStackTrace()
                 }
             } else {
-                Tools.Show.message(requireContext(), "Insira um endereço de partida e destino")
+                Tools.Show.message(requireContext(), "Insira um local ou endereço de destino.")
             }
         }
     }
 
     private fun showMap() {
-        map = binding.mapView
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setZoomRounding(true)
         map.setMultiTouchControls(true)
         map.setUseDataConnection(true)
         map.isClickable = true
         mapController = map.controller
-        mapController.setZoom(17.0)
+        mapController.setZoom(zoomLevel)
         map.overlayManager.tilesOverlay.loadingBackgroundColor = resources.getColor(R.color.primary_background, requireActivity().theme)
-
         if (roomService.getSetting().switchMap)
             map.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS)
+        mapController.setCenter(locationGeoPoint)
+        addMarker(locationGeoPoint)
+        map.invalidate()
+    }
 
-        val startPoint = GeoPoint(-23.533773, -46.625290)
-        mapController.setCenter(startPoint)
-        addMarker(startPoint)
+    private fun getLocation(): GeoPoint {
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val criteria = Criteria()
+        val provider = locationManager.getBestProvider(criteria, false)
+        var geoPoint = GeoPoint(-23.5000,-46.5000) // DEFAULT IN CASE NO SERVICE WAS FOUND
+
+        // CHECK PERMISSIONS
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // PERMISSION NOT GRANTED
+            Tools.Show.message(requireContext(), "É necessário a permissão de localização.")
+            ActivityCompat.requestPermissions(
+                requireActivity(), Constants.MAP_REQUIRED_PERMISSIONS,
+                Constants.MAP_REQUEST_CODE_PERMISSION
+            )
+        } else {
+            // PERMISSION GRANTED
+            if (provider != null) {
+                val latitude = locationManager.getLastKnownLocation(provider)?.latitude
+                val longitude = locationManager.getLastKnownLocation(provider)?.longitude
+                if (latitude != null && longitude != null)
+                    geoPoint = GeoPoint(latitude, longitude)
+                else {
+                   Tools.Show.message(requireContext(), "Não foi possível encontrar a sua localizacão.")
+                }
+            } else {
+                Tools.Show.message(requireContext(), "Provedor do serviço de GPS não encontrado.")
+            }
+        }
+        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0f, requireActivity())
+        return geoPoint
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun traceRoute(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double) {
+    private fun traceRoute(startPoint: GeoPoint, endPoint: GeoPoint) {
 
-        val startPoint = GeoPoint(fromLat, fromLon)
-        val endPoint = GeoPoint(toLat, toLon)
         val waypoints = ArrayList<GeoPoint>()
-
-        mapController.setCenter(startPoint)
-        addMarker(startPoint)
-
         waypoints.add(startPoint)
         waypoints.add(endPoint)
+        locationGeoPoint = getLocation()
+        showMap()
 
         // SET UP WAY BY FOOT
         (roadManager as OSRMRoadManager).setMean(OSRMRoadManager.MEAN_BY_FOOT)
@@ -171,12 +198,12 @@ class GuideFragment : Fragment(),LocationListener {
                 // FILL UP BUBBLES
                 nodeMarker.snippet = node.mInstructions;
 //            nodeMarker.subDescription = road.getLengthDurationText(requireContext(),node.mLength.roundToInt())
-                println("**************** ManeuverType ${node.mManeuverType}")
                 val icon = when (node.mManeuverType) {
                     24 -> resources.getDrawable(R.drawable.ic_destination, requireActivity().theme)
                     4 -> resources.getDrawable(R.drawable.ic_turn_left, requireActivity().theme)
                     7 -> resources.getDrawable(R.drawable.ic_turn_right, requireActivity().theme)
                     else -> resources.getDrawable(R.drawable.ic_continue, requireActivity().theme)
+                    // TODO Needs to implement the other maneuver type || println("${node.mManeuverType}")
                 }
                 nodeMarker.image = icon
                 map.overlays.add(nodeMarker)
@@ -189,30 +216,47 @@ class GuideFragment : Fragment(),LocationListener {
         road.mNodes.last().let { node ->
             val nodeMarker = Marker(map)
             nodeMarker.position = node.mLocation
-            nodeMarker.icon = resources.getDrawable(R.drawable.ic_location_light, requireActivity().theme)
+            nodeMarker.icon = resources.getDrawable(R.drawable.ic_flag_light, requireActivity().theme)
             nodeMarker.title = "Chegada ao destino"
             map.overlays.add(nodeMarker)
         }
 
+        // addMarker(startPoint)
         map.invalidate()
+        map.zoomToBoundingBox(roadOverlay.bounds, true);
     }
 
-//    private fun createRoute() {
-//        val client: Client = ClientBuilder.newClient()
-//        val response: Response =
-//            client.target("https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf6248dd0e7d8f590e4a17a574621c89ba855a&start=8.681495,49.41461&end=8.687872,49.420318")
-//                .request(MediaType.TEXT_PLAIN_TYPE)
-//                .header(
-//                    "Accept",
-//                    "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8"
-//                )
-//                .get()
-//
-//        println("status: " + response.status)
-//        println("headers: " + response.headers)
-//        println("body:" + response.readEntity(String::class.java))
-//
-//    }
+    private fun zoomToBounds(box: BoundingBox?) {
+        if (map.height > 0) {
+            map.zoomToBoundingBox(box, true)
+        } else {
+            val vto = map.viewTreeObserver
+            vto.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    map.zoomToBoundingBox(box, true)
+                    val vto2 = map.viewTreeObserver
+                    vto2.removeOnGlobalLayoutListener(this)
+                }
+            })
+        }
+    }
+
+    fun computeArea(points: ArrayList<GeoPoint?>): BoundingBox {
+        var nord = 0.0
+        var sud = 0.0
+        var ovest = 0.0
+        var est = 0.0
+        for (i in 0 until points.size) {
+            if (points[i] == null) continue
+            val lat = points[i]!!.latitude
+            val lon = points[i]!!.longitude
+            if (i == 0 || lat > nord) nord = lat
+            if (i == 0 || lat < sud) sud = lat
+            if (i == 0 || lon < ovest) ovest = lon
+            if (i == 0 || lon > est) est = lon
+        }
+        return BoundingBox(nord, est, sud, ovest)
+    }
 
     private fun addMarker(center: GeoPoint) {
         val marker = Marker(map)
@@ -260,28 +304,18 @@ class GuideFragment : Fragment(),LocationListener {
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray) {
-        if (requestCode == Constants.MAP_REQUEST_CODE_PERMISSION) {
-            if (allPermissionGranted())
-                onResume()
-        } else {
-            Tools.Show.message(requireContext(),"É necessário permitir o acesso a localização.")
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        map.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        map.onPause()
-    }
+//    @Deprecated("Deprecated in Java")
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<String>,
+//        grantResults: IntArray) {
+//        if (requestCode == Constants.MAP_REQUEST_CODE_PERMISSION) {
+//            if (allPermissionGranted())
+//                onResume()
+//        } else {
+//            Tools.Show.message(requireContext(),"É necessário permitir o acesso a localização.")
+//        }
+//    }
 
     override fun onLocationChanged(location: Location) {
         val center = GeoPoint(location.latitude, location.longitude)

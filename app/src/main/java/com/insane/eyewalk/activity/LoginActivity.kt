@@ -3,12 +3,16 @@ package com.insane.eyewalk.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.insane.eyewalk.R
+import com.insane.eyewalk.config.Constants
 import com.insane.eyewalk.database.dto.SettingDTO
 import com.insane.eyewalk.database.room.AppDataBase
 import com.insane.eyewalk.databinding.ActivityLoginBinding
@@ -30,9 +34,38 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = AppDataBase.getDataBase(this)
+
         setUpInitialData()
-        checkExistingUser()
         setUpClickListeners()
+
+        if (checkPermissions()) checkExistingUser()
+    }
+
+    private fun checkPermissions(): Boolean {
+        var permission = 0
+        if (mapPermissionGranted()) {
+            println("Map permission granted!")
+            permission++
+        } else {
+            ActivityCompat.requestPermissions(
+                this, Constants.MAP_REQUIRED_PERMISSIONS, Constants.MAP_REQUEST_CODE_PERMISSION)
+        }
+        if (cameraPermissionGranted()) {
+            println("Camera permission granted!")
+            permission++
+        } else {
+            ActivityCompat.requestPermissions(
+                this, Constants.CAMERA_REQUIRED_PERMISSIONS, Constants.CAMERA_REQUEST_CODE_PERMISSION)
+        }
+        return permission == 2
+    }
+
+    private fun mapPermissionGranted() = Constants.MAP_REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun cameraPermissionGranted() = Constants.CAMERA_REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun setUpInitialData() {

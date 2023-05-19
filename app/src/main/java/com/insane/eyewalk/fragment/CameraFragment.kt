@@ -1,6 +1,8 @@
 package com.insane.eyewalk.fragment
 
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -20,13 +22,15 @@ import com.insane.eyewalk.R
 import com.insane.eyewalk.config.Constants
 import com.insane.eyewalk.config.Player
 import com.insane.eyewalk.databinding.FragmentCameraBinding
+import com.insane.eyewalk.fragment.CameraFragment.ButtonState.*
 import com.insane.eyewalk.utils.Tools
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import com.insane.eyewalk.fragment.CameraFragment.ButtonState.*
+
 
 class CameraFragment : Fragment() {
 
@@ -125,7 +129,9 @@ class CameraFragment : Fragment() {
             }
         }
         return if (mediaDir != null && mediaDir.exists())
-            mediaDir else requireActivity().filesDir
+            mediaDir
+        else
+            requireActivity().filesDir
     }
 
     private fun takePhoto() {
@@ -157,6 +163,18 @@ class CameraFragment : Fragment() {
                 }
             }
         )
+    }
+
+    /**
+     * Method to convert a image file to Base64
+     * @param imageUri The saved image uri
+     */
+    private fun convertImageToBase64(imageUri: Uri): String {
+        val imageFile = BitmapFactory.decodeFile(imageUri.path)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        imageFile.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+        val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
+        return Base64.getEncoder().encodeToString(byteArray)
     }
 
     private fun setButtonState(state: ButtonState, text: String = "") {
