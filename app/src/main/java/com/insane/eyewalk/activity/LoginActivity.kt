@@ -4,16 +4,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.internal.ViewUtils
 import com.insane.eyewalk.R
 import com.insane.eyewalk.config.Constants
 import com.insane.eyewalk.database.dto.SettingDTO
@@ -44,6 +44,13 @@ class LoginActivity : AppCompatActivity() {
         setUpClickListeners()
 
         if (checkPermissions()) checkExistingUser()
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.scSignUp.visibility == View.VISIBLE)
+                    binding.scSignUp.visibility = View.GONE
+            }
+        })
     }
 
     private fun checkPermissions(): Boolean {
