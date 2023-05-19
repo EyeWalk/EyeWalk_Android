@@ -50,7 +50,7 @@ class GuideFragment : Fragment(),LocationListener {
     private lateinit var mapController: IMapController
     private lateinit var roadManager: RoadManager
     private lateinit var locationGeoPoint: GeoPoint
-    private var zoomLevel: Double = 20.0
+    private var zoomLevel: Double = 18.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,7 +135,7 @@ class GuideFragment : Fragment(),LocationListener {
             map.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS)
         mapController.setCenter(locationGeoPoint)
         addMarker(locationGeoPoint)
-        map.invalidate()
+        mapController.animateTo(locationGeoPoint)
     }
 
     private fun getLocation(): GeoPoint {
@@ -223,7 +223,7 @@ class GuideFragment : Fragment(),LocationListener {
 
         // addMarker(startPoint)
         map.invalidate()
-        map.zoomToBoundingBox(roadOverlay.bounds, true);
+        map.zoomToBoundingBox(roadOverlay.bounds, true)
     }
 
     private fun zoomToBounds(box: BoundingBox?) {

@@ -6,6 +6,7 @@ import com.insane.eyewalk.model.Token
 import com.insane.eyewalk.model.User
 import com.insane.eyewalk.model.input.ContactInput
 import com.insane.eyewalk.model.input.UserAuthentication
+import com.insane.eyewalk.model.input.UserRegisterInput
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
 import retrofit2.Response
@@ -29,6 +30,11 @@ interface ApiInterface {
     suspend fun getUser(
         @Header("Authorization") token: String
     ): Response<User>
+
+    @POST("auth/register")
+    suspend fun registerUser(
+        @Body userRegisterInput: UserRegisterInput
+    ): Response<Token>
 
     @GET("auth/logout")
     suspend fun logoutUser(

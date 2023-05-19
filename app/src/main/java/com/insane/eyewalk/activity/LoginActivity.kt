@@ -7,10 +7,13 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView.OnEditorActionListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.internal.ViewUtils
 import com.insane.eyewalk.R
 import com.insane.eyewalk.config.Constants
 import com.insane.eyewalk.database.dto.SettingDTO
@@ -18,8 +21,10 @@ import com.insane.eyewalk.database.room.AppDataBase
 import com.insane.eyewalk.databinding.ActivityLoginBinding
 import com.insane.eyewalk.model.Token
 import com.insane.eyewalk.model.input.UserAuthentication
+import com.insane.eyewalk.model.input.UserRegisterInput
 import com.insane.eyewalk.service.RoomService
 import com.insane.eyewalk.service.TokenService
+import com.insane.eyewalk.service.UserService
 import com.insane.eyewalk.utils.Tools
 import kotlinx.coroutines.launch
 
@@ -85,16 +90,82 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setUpClickListeners() {
+        // BACKGROUND CLICK
+        binding.constraintLogin.setOnClickListener {
+            hideKeyboard(binding.root)
+        }
+        binding.etPasswordLogin.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                login()
+                return@OnEditorActionListener true
+            }
+            false
+        })
         // BUTTON LOGIN
         binding.btnLogin.setOnClickListener {
-            hideKeyboard(binding.root)
-            val email = binding.etEmailLogin.text.toString()
-            val password = binding.etPasswordLogin.text.toString()
-            if (email.length >= 5) {
-                if (password.length >= 5) {
-                    login(email, password)
-                }  else Tools.Show.message(this, resources.getString(R.string.passTooShort))
-            } else Tools.Show.message(this, resources.getString(R.string.invalidEmail))
+            login()
+        }
+        binding.btnSignIn.setOnClickListener {
+            binding.scSignUp.visibility = View.VISIBLE
+        }
+        binding.tvHaveAccount.setOnClickListener {
+            binding.scSignUp.visibility = View.GONE
+        }
+        binding.btnRegister.setOnClickListener {
+            // REGISTER NEW USER
+            registerUser()
+        }
+        binding.etPasswordVerifySignIn.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                registerUser()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+    }
+
+    private fun registerUser() {
+        hideKeyboard(binding.root)
+        val name = binding.etNameSignIn.text.toString()
+        val email = binding.etEmailSignIn.text.toString()
+        val password = binding.etPasswordSignIn.text.toString()
+        val passwordVerify = binding.etPasswordVerifySignIn.text.toString()
+
+        if (name.isNotEmpty() && name.length > 2) {
+            if (email.isNotEmpty() && email.length >= 7) {
+                if (password.isNotEmpty() && password.length >= 5) {
+                    if (password.contentEquals(passwordVerify)) {
+                        loader(true)
+                        lifecycleScope.launch {
+                            try {
+                                val token = UserService.registerUser(UserRegisterInput(name, email, password))
+                                if (token.isSuccessful) {
+                                    token.body()?.let {
+                                        RoomService(db).updateToken(it.toTokenDTO())
+                                        startApp(it)
+                                    }
+                                } else if (token.code() == 409) {
+                                    errorEmailAlreadyExists()
+                                } else {
+                                    loader(false)
+                                    errorSignIn()
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                            loader(false)
+                        }
+                    } else {
+                        Tools.Show.message(this, "Senha não confere!")
+                    }
+                } else {
+                    Tools.Show.message(this, "Senha deve conter no mínimo 5 caracteres")
+                }
+            } else {
+                Tools.Show.message(this, "Insira um email válido")
+            }
+        } else {
+            Tools.Show.message(this, "Insira um nome válido")
         }
     }
 
@@ -117,25 +188,34 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun login(email: String, password: String) {
-        lifecycleScope.launch {
-            try {
-                loader(true)
-                val token = TokenService.getToken(UserAuthentication(email, password))
-                if (token.isSuccessful) {
-                    token.body()?.let {
-                        RoomService(db).updateToken(it.toTokenDTO())
-                        startApp(it)
+    private fun login() {
+        hideKeyboard(binding.root)
+        val email = binding.etEmailLogin.text.toString()
+        val password = binding.etPasswordLogin.text.toString()
+        if (email.length >= 5) {
+            if (password.length >= 5) {
+
+                lifecycleScope.launch {
+                    try {
+                        loader(true)
+                        val token = TokenService.getToken(UserAuthentication(email, password))
+                        if (token.isSuccessful) {
+                            token.body()?.let {
+                                RoomService(db).updateToken(it.toTokenDTO())
+                                startApp(it)
+                            }
+                        } else {
+                            loader(false)
+                            notAuthenticated()
+                        }
+                    } catch (e: Exception) {
+                        loader(false)
+                        errorAuthenticating()
                     }
-                } else {
-                    loader(false)
-                    notAuthenticated()
                 }
-            } catch (e: Exception) {
-                loader(false)
-                errorAuthenticating()
-            }
-        }
+
+            }  else Tools.Show.message(this, resources.getString(R.string.passTooShort))
+        } else Tools.Show.message(this, resources.getString(R.string.invalidEmail))
     }
 
     private fun startApp(token: Token) {
@@ -147,6 +227,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun notAuthenticated() {
         Tools.Show.message(this, resources.getString(R.string.notAuthenticated))
+    }
+    private fun errorEmailAlreadyExists() {
+        Tools.Show.message(this,"Email já cadastrado!")
+    }
+    private fun errorSignIn() {
+        Tools.Show.message(this,"Não foi possível cadastrar! Tente novamente.")
     }
 
     private fun errorAuthenticating() {

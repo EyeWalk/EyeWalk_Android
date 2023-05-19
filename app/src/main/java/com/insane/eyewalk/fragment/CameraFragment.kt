@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.camera.camera2.internal.annotation.CameraExecutor
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -40,12 +41,13 @@ class CameraFragment : Fragment() {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraShutter: Player
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = FragmentCameraBinding.inflate(inflater, container, false)
         outputDirectory = getOutputDirectory()
         cameraShutter = Player(requireContext(),R.raw.shutter)
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
         setClickListeners()
         return binding.root
     }

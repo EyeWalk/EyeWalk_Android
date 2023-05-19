@@ -15,7 +15,8 @@
 
     <!-- PLACEHOLDER -->
     <string name="login_email_placeholder">Email</string>
-    <string name="login_password_placeholder">Password</string>
+    <string name="login_password_placeholder">Senha</string>
+    <string name="login_password_verify_placeholder">Confirme a senha</string>
     <string name="login_button">Ir</string>
     <string name="label_contact">Contato de emergência</string>
 

@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.insane.eyewalk.database.dto.UserDTO
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDate
 
 @Parcelize
 data class User (

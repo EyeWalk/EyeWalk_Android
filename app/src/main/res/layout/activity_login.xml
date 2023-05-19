@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_background"
@@ -117,6 +118,159 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- SIGN UP -->
+    <ScrollView
+        android:id="@+id/scSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="20dp"
+        android:background="@color/primary_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/lnSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="30dp"
+            android:elevation="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Cadastro"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/etNameSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_box_input_text"
+                android:drawableStart="@drawable/ic_person"
+                android:drawablePadding="7dp"
+                android:gravity="start"
+                android:hint="Nome"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:textColor="@color/secondary_text"
+                android:textColorHint="@color/low_text"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/etEmailSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_box_input_text"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="7dp"
+                android:gravity="start"
+                android:hint="@string/login_email_placeholder"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:textColor="@color/secondary_text"
+                android:textColorHint="@color/low_text"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/font" />
+
+
+            <EditText
+                android:id="@+id/etPasswordSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="3"
+                android:background="@drawable/ic_box_input_text"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="7dp"
+                android:gravity="start"
+                android:hint="@string/login_password_placeholder"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textColor="@color/secondary_text"
+                android:textColorHint="@color/low_text"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/etPasswordVerifySignIn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="3"
+                android:background="@drawable/ic_box_input_text"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="7dp"
+                android:gravity="start"
+                android:hint="@string/login_password_verify_placeholder"
+                android:imeOptions="actionGo"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textColor="@color/secondary_text"
+                android:textColorHint="@color/low_text"
+                android:textSize="24sp" />
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:textColor="@color/low_text"-->
+<!--                android:textSize="12sp"-->
+<!--                android:text="Senha deve conter pelo menos 5 caracteres"/>-->
+
+            <TextView
+                android:id="@+id/tvHaveAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/primary_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:text="Já possui cadastro? Entre com a sua conta."/>
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginTop="50dp"
+                android:backgroundTint="@color/secondary_background"
+                android:text="@string/login_signin"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
 
     <!-- LOADER -->
     <RelativeLayout
