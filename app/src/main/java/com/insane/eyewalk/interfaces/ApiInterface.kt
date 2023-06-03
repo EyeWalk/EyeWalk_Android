@@ -52,6 +52,12 @@ interface ApiInterface {
         @Body contact: ContactInput
     ): Response<Contact>
 
+    @DELETE("contact/{id}")
+    suspend fun deleteContact(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    )
+
     companion object {
         fun create() : ApiInterface {
             val client = OkHttpClient.Builder().build()

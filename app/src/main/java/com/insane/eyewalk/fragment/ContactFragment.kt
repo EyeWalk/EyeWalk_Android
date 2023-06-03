@@ -118,11 +118,33 @@ class ContactFragment : Fragment() {
         binding.etInputEmail.setText("")
         binding.switchInputEmergency.isChecked = false
         binding.clModalAddContact.visibility = View.GONE
+        binding.clModalOpenContact.visibility = View.GONE
     }
 
     fun openContactDetail(contact: Contact) {
-        Tools.Show.message(requireContext(), "Abrindo contato id ${contact.id}")
+        binding.clModalOpenContact.visibility = View.VISIBLE
+        binding.tvContactName.text = contact.name
+        if (contact.phones.isNotEmpty()) binding.tvContactPhone.text = contact.phones[0].phone
+        if (contact.emails.isNotEmpty()) binding.tvContactEmail.text = contact.emails[0].email
+        binding.switchContactEmergency.isChecked = contact.emergency
+        binding.btnBackContact.setOnClickListener {binding.clModalOpenContact.visibility = View.GONE }
+        binding.btnDeleteContact.setOnClickListener { deleteContact(contact) }
     }
+
+    private fun deleteContact(contact: Contact) {
+        loader(true)
+        try {
+            lifecycleScope.launch {
+                UserService.deleteContact(RoomService(db).getToken().toToken(), contact)
+                closeContact()
+                setUpViews()
+            }
+        } catch (e: Exception) {
+            System.err.println(e.message)
+            closeContact()
+        }
+    }
+
     private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)

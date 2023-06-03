@@ -8,6 +8,7 @@ import com.insane.eyewalk.model.input.ContactInput
 import com.insane.eyewalk.model.input.UserRegisterInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.apache.http.HttpStatus
 import retrofit2.Response
 
 object UserService {
@@ -32,6 +33,10 @@ object UserService {
 
     suspend fun saveContact(token: Token, contact: ContactInput): Response<Contact> = withContext(Dispatchers.IO) {
         apiService.saveContact(token = "Bearer ${token.accessToken}",contact)
+    }
+
+    suspend fun deleteContact(token: Token, contact: Contact) = withContext(Dispatchers.IO) {
+        apiService.deleteContact(token = "Bearer ${token.accessToken}", contact.id)
     }
 
 }

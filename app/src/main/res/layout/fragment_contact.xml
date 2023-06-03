@@ -203,6 +203,136 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- MODAL OPEN CONTACT -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clModalOpenContact"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/rlBackgroundModalOpenContact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="1"
+            android:background="@color/primary_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/scModalOpenContact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contato"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:textSize="30sp"/>
+
+                <TextView
+                    android:id="@+id/tvContactName"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/ic_box_input_text"
+                    android:drawablePadding="7dp"
+                    android:gravity="start"
+                    android:text="Nome"
+                    android:textColor="@color/low_text"
+                    android:textSize="24sp"
+                    app:drawableStartCompat="@drawable/ic_person" />
+
+                <Switch
+                    android:id="@+id/switchContactEmergency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="30dp"
+                    android:text="Contato de emergência"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+                <TextView
+                    android:id="@+id/tvContactPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/ic_box_input_text"
+                    android:drawablePadding="7dp"
+                    android:gravity="start"
+                    android:text="Telefone"
+                    android:textColor="@color/low_text"
+                    android:textSize="24sp"
+                    app:drawableStartCompat="@drawable/ic_phone" />
+
+                <TextView
+                    android:id="@+id/tvContactEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/ic_box_input_text"
+                    android:drawablePadding="7dp"
+                    android:gravity="start"
+                    android:text="Email"
+                    android:textColor="@color/low_text"
+                    android:textSize="24sp"
+                    app:drawableStartCompat="@drawable/ic_email" />
+
+                <Button
+                    android:id="@+id/btnBackContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginHorizontal="30dp"
+                    android:textSize="19sp"
+                    android:textColor="@color/secondary_text"
+                    android:backgroundTint="@color/secondary_background"
+                    android:text="Voltar" />
+
+                <Button
+                    android:id="@+id/btnDeleteContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginHorizontal="30dp"
+                    android:textSize="19sp"
+                    android:textColor="@color/danger_text"
+                    android:backgroundTint="@color/danger_background"
+                    android:text="Apagar" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- LOADER -->
     <RelativeLayout
