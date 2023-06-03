@@ -93,21 +93,30 @@ class ContactFragment : Fragment() {
             emails = listOf(EmailInput(binding.etInputEmail.text.toString())),
             emergency = binding.switchInputEmergency.isChecked
         )
-        try {
-            lifecycleScope.launch {
-                UserService.saveContact(RoomService(db).getToken().toToken(), contact)
+        if (contact.name.isNotEmpty() && contact.name.isNotBlank() && (contact.phones[0].phone.isNotEmpty() || contact.emails[0].email.isNotEmpty())) {
+            try {
+                lifecycleScope.launch {
+                    UserService.saveContact(RoomService(db).getToken().toToken(), contact)
+                    closeContact()
+                    setUpViews()
+                }
+            } catch (e: Exception) {
+                System.err.println(e.message)
                 closeContact()
-                setUpViews()
             }
-        } catch (e: Exception) {
-            System.err.println(e.message)
-            closeContact()
+        } else {
+            loader(false)
+            Tools.Show.message(context, "Faltam informações do contato")
         }
     }
 
     private fun closeContact() {
         loader(false)
         requireActivity().hideKeyboard(binding.root)
+        binding.etInputName.setText("")
+        binding.etInputPhone.setText("")
+        binding.etInputEmail.setText("")
+        binding.switchInputEmergency.isChecked = false
         binding.clModalAddContact.visibility = View.GONE
     }
 
