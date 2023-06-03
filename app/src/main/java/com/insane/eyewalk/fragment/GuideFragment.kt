@@ -213,12 +213,15 @@ class GuideFragment : Fragment(),LocationListener {
         }
 
         // SET UP DESTINATION BUBBLE
-        road.mNodes.last().let { node ->
-            val nodeMarker = Marker(map)
-            nodeMarker.position = node.mLocation
-            nodeMarker.icon = resources.getDrawable(R.drawable.ic_flag_light, requireActivity().theme)
-            nodeMarker.title = "Chegada ao destino"
-            map.overlays.add(nodeMarker)
+        if (road.mNodes.size > 0) {
+            road.mNodes.last().let { node ->
+                val nodeMarker = Marker(map)
+                nodeMarker.position = node.mLocation
+                nodeMarker.icon =
+                    resources.getDrawable(R.drawable.ic_flag_light, requireActivity().theme)
+                nodeMarker.title = "Chegada ao destino"
+                map.overlays.add(nodeMarker)
+            }
         }
 
         // addMarker(startPoint)
