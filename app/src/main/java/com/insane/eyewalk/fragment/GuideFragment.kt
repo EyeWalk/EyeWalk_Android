@@ -161,7 +161,7 @@ class GuideFragment : Fragment(),LocationListener {
                 if (latitude != null && longitude != null)
                     geoPoint = GeoPoint(latitude, longitude)
                 else {
-                   Tools.Show.message(requireContext(), "Não foi possível encontrar a sua localizacão.")
+                    Tools.Show.message(requireContext(), "Não foi possível encontrar a sua localizacão.")
                 }
             } else {
                 Tools.Show.message(requireContext(), "Provedor do serviço de GPS não encontrado.")

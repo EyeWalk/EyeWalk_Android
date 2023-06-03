@@ -56,14 +56,14 @@ class LoginActivity : AppCompatActivity() {
     private fun checkPermissions(): Boolean {
         var permission = 0
         if (mapPermissionGranted()) {
-            println("Map permission granted!")
+            println("******************* Map permission granted!")
             permission++
         } else {
             ActivityCompat.requestPermissions(
                 this, Constants.MAP_REQUIRED_PERMISSIONS, Constants.MAP_REQUEST_CODE_PERMISSION)
         }
         if (cameraPermissionGranted()) {
-            println("Camera permission granted!")
+            println("******************* Camera permission granted!")
             permission++
         } else {
             ActivityCompat.requestPermissions(

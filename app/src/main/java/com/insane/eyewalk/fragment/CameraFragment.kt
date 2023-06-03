@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.camera.camera2.internal.annotation.CameraExecutor
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -27,10 +26,23 @@ import com.insane.eyewalk.fragment.CameraFragment.ButtonState.*
 import com.insane.eyewalk.utils.Tools
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import android.util.Base64
+import androidx.lifecycle.lifecycleScope
+import com.insane.eyewalk.model.api.FeatureType
+import com.insane.eyewalk.model.api.Image
+import com.insane.eyewalk.model.api.ImageContent
+import com.insane.eyewalk.model.api.ImageRequest
+import com.insane.eyewalk.model.input.UserRegisterInput
+import com.insane.eyewalk.service.GoogleService
+import com.insane.eyewalk.service.RoomService
+import com.insane.eyewalk.service.UserService
+import kotlinx.coroutines.launch
 
 
 class CameraFragment : Fragment() {
@@ -156,6 +168,25 @@ class CameraFragment : Fragment() {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     identifyImage(savedUri)
+                    val b64 = convertImageToBase64(savedUri)
+                    lifecycleScope.launch {
+                        try {
+                            val imageRequest = ImageRequest(requests = listOf(Image(image = ImageContent(content = b64), features = listOf(FeatureType(type = "LABEL_DETECTION")))))
+                            val analysis = GoogleService.analyzeImage(imageRequest)
+                            if (analysis.isSuccessful) {
+                                analysis.body()?.let {
+                                    setButtonState(RESULT, it.responses[0].labelAnnotations[0].description)
+                                    println(it.responses[0].labelAnnotations[0].score)
+                                }
+                            } else {
+                                println("************ ERROR PROCESSING IMAGE **************")
+                                setButtonState(RESULT, "Imagem não identificada")
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        println("************* END PROCESS *************")
+                    }
                     cameraShutter.stop()
                 }
 
@@ -174,10 +205,34 @@ class CameraFragment : Fragment() {
     private fun convertImageToBase64(imageUri: Uri): String {
         val imageFile = BitmapFactory.decodeFile(imageUri.path)
         val byteArrayOutputStream = ByteArrayOutputStream()
-        imageFile.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+        imageFile.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStream)
         val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-        return Base64.getEncoder().encodeToString(byteArray)
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
+
+    private fun encodeImage(bm: Bitmap): String? {
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+        val b = baos.toByteArray()
+        return Base64.encodeToString(b, Base64.DEFAULT)
+    }
+
+    private fun encodeImage(path: String): String? {
+        val imagefile = File(path)
+        var fis: FileInputStream? = null
+        try {
+            fis = FileInputStream(imagefile)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+        val bm = BitmapFactory.decodeStream(fis)
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+        val b = baos.toByteArray()
+        //Base64.de
+        return Base64.encodeToString(b, Base64.DEFAULT)
+    }
+
 
     private fun setButtonState(state: ButtonState, text: String = "") {
         val btnCapture: Button = binding.btnCaptureCamera
@@ -206,7 +261,6 @@ class CameraFragment : Fragment() {
         binding.ivCapturedImage.let{ iv ->
             iv.setImageURI(uri)
             iv.visibility = View.VISIBLE
-            setButtonState(RESULT, "descrição da foto")
         }
     }
 
